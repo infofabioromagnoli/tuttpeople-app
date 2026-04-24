@@ -4,6 +4,8 @@
 
   const PROFILES = window.PROFILES_DATA;
   const LUNA3_B64 = window.LUNA3_B64;
+  const LUNA3_SQ  = 'data:image/jpeg;base64,' + window.LUNA3_SELFIE2_SQ;
+  const LUNA3_P   = 'data:image/jpeg;base64,' + window.LUNA3_SELFIE2_P;
 
   // Resolve avatar URL for a profile object
   const avUrl = (p) => {
@@ -54,16 +56,16 @@
       data.photos = ['t1','t2','t3','t4','t5','t6'];
     } else {
       data.bio = 'Artigiana. Decoro cuori sacri e oggetti votivi.\nMare e mani.';
-      data.work = 'Bottega darte sacra · Pescara';
-      data.school = 'Accademia di Belle Arti — LAquila';
-      data.from = 'Chieti';
+      data.work = 'Bottega d’arte sacra · Torino di Sangro';
+      data.school = 'Accademia di Belle Arti — L’Aquila';
+      data.from = 'Torino di Sangro';
       data.posts = [
         { t:'Nuova serie di cuori votivi in lavorazione. Rame, smalti, pazienza.', w:'3 giorni fa', likes:154, com:39, shares:18, mediaSeed:'cuorivotivi' },
-        { t:'La bottega è aperta sabato mattina. Venite a vedere.', w:'1 settimana fa', likes:67, com:14, shares:4 },
+        { t:'La bottega è aperta sabato mattina. Venite a vedere.', w:'1 settimana fa', likes:67, com:14, shares:4, mediaUrl: LUNA3_P },
         { t:"Il mare d'inverno è l'unico maestro che conosco.", w:'2 settimane fa', likes:288, com:42, shares:21, mediaSeed:'mareinverno' }
       ];
       data.cover = { seed:'pescaracover' };
-      data.photos = ['c1','c2','c3','c4','c5','c6'];
+      data.photos = [{ url: LUNA3_SQ }, { url:'data:image/jpeg;base64,'+LUNA3_B64 }, 'c3','c4','c5','c6'];
     }
     return data;
   });
@@ -427,7 +429,10 @@
   // ===== PROFILE =====
   const renderProfile = () => {
     const p = currentProfile; if (!p) return renderHome();
-    const photosGrid = p.photos.map((seed) => `<div><img src="${picsum(p.id+'-photo-'+seed, 300, 300)}" alt="" loading="lazy"></div>`).join('');
+    const photosGrid = p.photos.map((item) => {
+      const src = typeof item === 'string' ? picsum(p.id+'-photo-'+item, 300, 300) : item.url;
+      return `<div><img src="${src}" alt="" loading="lazy"></div>`;
+    }).join('');
 
     // Friends preview - pick 6 friends from profiles deterministically
     const friendsPreview = [PROFILES[5], PROFILES[18], PROFILES[37], PROFILES[62], PROFILES[88], PROFILES[111]];
@@ -458,7 +463,7 @@
           <button class="post-more" data-action="noop">${icon('i-dots')}</button>
         </div>
         <div class="text">${x.t}</div>
-        ${x.mediaSeed ? `<img class="post-media" src="${picsum(x.mediaSeed, x.mediaWide?800:600, x.mediaWide?500:600)}" alt="" loading="lazy">` : ''}
+        ${x.mediaUrl ? `<img class="post-media" src="${x.mediaUrl}" alt="" loading="lazy">` : x.mediaSeed ? `<img class="post-media" src="${picsum(x.mediaSeed, x.mediaWide?800:600, x.mediaWide?500:600)}" alt="" loading="lazy">` : ''}
         <div class="post-stats">
           <div class="reacts">
             <span class="react-pill react-like">${icon('i-thumb-fill')}</span>
