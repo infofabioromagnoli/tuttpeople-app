@@ -7,13 +7,18 @@
   const LUNA3_SQ  = 'data:image/jpeg;base64,' + window.LUNA3_SELFIE2_SQ;
   const LUNA3_P   = 'data:image/jpeg;base64,' + window.LUNA3_SELFIE2_P;
 
-  // Resolve avatar URL for a profile object
+  // Resolve avatar URL — AI-generated faces via DiceBear (no copyright)
   const avUrl = (p) => {
     if (p.luna === 3) return 'data:image/jpeg;base64,' + LUNA3_B64;
-    if (p.luna === 1) return 'https://randomuser.me/api/portraits/women/68.jpg';
-    if (p.luna === 2) return 'https://randomuser.me/api/portraits/women/45.jpg';
+    if (p.luna === 1) return `https://api.dicebear.com/9.x/personas/svg?seed=luna-milano-1&gender=female&backgroundColor=b6e3f4,d1d4f9`;
+    if (p.luna === 2) return `https://api.dicebear.com/9.x/personas/svg?seed=luna-torino-2&gender=female&backgroundColor=ffd5dc,ffdfbf`;
     if (p.isMe)      return 'stefano-avatar.png';
-    return 'https://randomuser.me/api/portraits/' + (p.g || 'women') + '/' + (p.p || 0) + '.jpg';
+    const seed = encodeURIComponent(p.n);
+    const gender = p.g === 'women' ? 'female' : 'male';
+    const bg = p.g === 'women'
+      ? 'ffd5dc,ffdfbf,c0aede,d1d4f9'
+      : 'b6e3f4,c0aede,d1d4f9,b6f0d4';
+    return `https://api.dicebear.com/9.x/personas/svg?seed=${seed}&gender=${gender}&backgroundColor=${bg}`;
   };
 
   // ME object - find Stefano in profiles
@@ -55,17 +60,17 @@
       data.cover = { seed:'torinocover' };
       data.photos = ['t1','t2','t3','t4','t5','t6'];
     } else {
-      data.bio = 'Artigiana. Decoro cuori sacri e oggetti votivi.\nMare e mani.';
-      data.work = 'Bottega d’arte sacra · Torino di Sangro';
-      data.school = 'Accademia di Belle Arti — L’Aquila';
-      data.from = 'Torino di Sangro';
+      data.bio = ‘Artigiana. Decoro cuori sacri e oggetti votivi.\nMare e mani.’;
+      data.work = "Bottega d’arte sacra · Fossacesia";
+      data.school = "Accademia di Belle Arti — L’Aquila";
+      data.from = ‘Fossacesia’;
       data.posts = [
-        { t:'Nuova serie di cuori votivi in lavorazione. Rame, smalti, pazienza.', w:'3 giorni fa', likes:154, com:39, shares:18, mediaSeed:'cuorivotivi' },
-        { t:'La bottega è aperta sabato mattina. Venite a vedere.', w:'1 settimana fa', likes:67, com:14, shares:4, mediaUrl: LUNA3_P },
-        { t:"Il mare d'inverno è l'unico maestro che conosco.", w:'2 settimane fa', likes:288, com:42, shares:21, mediaSeed:'mareinverno' }
+        { t:’Nuova serie di cuori votivi in lavorazione. Rame, smalti, pazienza.’, w:’3 giorni fa’, likes:38, com:9, shares:3, mediaSeed:’cuorivotivi’ },
+        { t:’La bottega è aperta sabato mattina. Venite a vedere.’, w:’1 settimana fa’, likes:21, com:5, shares:1, mediaUrl: LUNA3_P },
+        { t:"Il mare d’inverno è l’unico maestro che conosco.", w:’2 settimane fa’, likes:54, com:8, shares:2, mediaSeed:’mareinverno’ }
       ];
-      data.cover = { seed:'pescaracover' };
-      data.photos = [{ url: LUNA3_SQ }, { url:'data:image/jpeg;base64,'+LUNA3_B64 }, 'c3','c4','c5','c6'];
+      data.cover = { seed:’fossacesiacover’ };
+      data.photos = [{ url: LUNA3_SQ }, { url:’data:image/jpeg;base64,’+LUNA3_B64 }, ‘c3’,’c4’,’c5’,’c6’];
     }
     return data;
   });
@@ -130,9 +135,9 @@
   // Recent searches
   const RECENTS = [
     { type:'person', label:'Andrea Rossi' },
-    { type:'person', label:'Pasticceria Bertolini' },
-    { type:'place', label:'Pescara, lungomare' },
-    { type:'person', label:'Luna Costante' }
+    { type:'person', label:'Silvia De Santis' },
+    { type:'place', label:'Fossacesia, spiaggia' },
+    { type:'person', label:'Pasticceria Bertolini' }
   ];
 
   const app = document.getElementById('app');
@@ -434,21 +439,31 @@
       return `<div><img src="${src}" alt="" loading="lazy"></div>`;
     }).join('');
 
-    // Friends preview - pick 6 friends from profiles deterministically
-    const friendsPreview = [PROFILES[5], PROFILES[18], PROFILES[37], PROFILES[62], PROFILES[88], PROFILES[111]];
+    // 6 friends: 2 men + 4 women, full names
+    const friendsPreview = [PROFILES[2], PROFILES[14], PROFILES[180], PROFILES[185], PROFILES[190], PROFILES[195]];
     const friendsHtml = friendsPreview.map(f => `
       <div class="friend-item">
         <div class="ph"><img src="${avUrl(f)}" alt="" loading="lazy"></div>
-        <div class="nm">${f.n.split(' ')[0]} ${f.n.split(' ')[1]?f.n.split(' ')[1].charAt(0)+'.':''}</div>
+        <div class="nm">${f.n}</div>
       </div>
     `).join('');
 
-    const mutualHtml = p.mutual > 0 ? `
+    // Mutual friends differ per Luna so they feel realistic
+    const mutualSets = {
+      luna1: [PROFILES[181], PROFILES[183], PROFILES[5], PROFILES[20]],
+      luna2: [PROFILES[188]],
+      luna3: []
+    };
+    const mf = mutualSets[p.id] || [];
+    const mutualHtml = mf.length > 0 ? `
       <div class="mutual-row">
         <div class="mutual-stack">
-          ${[PROFILES[5],PROFILES[18],PROFILES[37]].map(f=>`<div class="avatar sm"><img src="${avUrl(f)}" alt=""></div>`).join('')}
+          ${mf.slice(0,3).map(f=>`<div class="avatar sm"><img src="${avUrl(f)}" alt=""></div>`).join('')}
         </div>
-        <span><b style="color:var(--text);">${PROFILES[5].n.split(' ')[0]}</b>, <b style="color:var(--text);">${PROFILES[18].n.split(' ')[0]}</b> e altri ${p.mutual-2>0?p.mutual-2:1} amici in comune</span>
+        <span>
+          <b style="color:var(--text);">${mf[0].n.split(' ')[0]}</b>${mf[1]?`, <b style="color:var(--text);">${mf[1].n.split(' ')[0]}</b>`:''}
+          e altri ${p.mutual - (mf[1]?2:1)} amici in comune
+        </span>
       </div>
     ` : '';
 
