@@ -60,17 +60,17 @@
       data.cover = { seed:'torinocover' };
       data.photos = ['t1','t2','t3','t4','t5','t6'];
     } else {
-      data.bio = ‘Artigiana. Decoro cuori sacri e oggetti votivi.\nMare e mani.’;
-      data.work = "Bottega d’arte sacra · Fossacesia";
-      data.school = "Accademia di Belle Arti — L’Aquila";
-      data.from = ‘Fossacesia’;
+      data.bio = 'Artigiana. Decoro cuori sacri e oggetti votivi.\nMare e mani.';
+      data.work = "Bottega d'arte sacra · Fossacesia";
+      data.school = "Accademia di Belle Arti — L'Aquila";
+      data.from = 'Fossacesia';
       data.posts = [
-        { t:’Nuova serie di cuori votivi in lavorazione. Rame, smalti, pazienza.’, w:’3 giorni fa’, likes:38, com:9, shares:3, mediaSeed:’cuorivotivi’ },
-        { t:’La bottega è aperta sabato mattina. Venite a vedere.’, w:’1 settimana fa’, likes:21, com:5, shares:1, mediaUrl: LUNA3_P },
-        { t:"Il mare d’inverno è l’unico maestro che conosco.", w:’2 settimane fa’, likes:54, com:8, shares:2, mediaSeed:’mareinverno’ }
+        { t:'Nuova serie di cuori votivi in lavorazione. Rame, smalti, pazienza.', w:'3 giorni fa', likes:38, com:9, shares:3, mediaSeed:'cuorivotivi' },
+        { t:'La bottega è aperta sabato mattina. Venite a vedere.', w:'1 settimana fa', likes:21, com:5, shares:1, mediaUrl: LUNA3_P },
+        { t:"Il mare d'inverno è l'unico maestro che conosco.", w:'2 settimane fa', likes:54, com:8, shares:2, mediaSeed:'mareinverno' }
       ];
-      data.cover = { seed:’fossacesiacover’ };
-      data.photos = [{ url: LUNA3_SQ }, { url:’data:image/jpeg;base64,’+LUNA3_B64 }, ‘c3’,’c4’,’c5’,’c6’];
+      data.cover = { seed:'fossacesiacover' };
+      data.photos = [{ url: LUNA3_SQ }, { url:'data:image/jpeg;base64,'+LUNA3_B64 }, 'c3','c4','c5','c6'];
     }
     return data;
   });
