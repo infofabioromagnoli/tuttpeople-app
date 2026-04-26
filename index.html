@@ -850,7 +850,12 @@ window.APP_DATA = {"profiles": [{"n": "Stefano Marini", "c": "Roma", "r": "Svilu
         for (let i=0; i<s.length; i++) h = ((h<<5)-h + s.charCodeAt(i)) | 0;
         return Math.abs(h);
       };
-      matches.sort((a,b) => hashStr(a.n + a.c) - hashStr(b.n + b.c));
+      matches.sort((a,b) => {
+        // Le 3 Luna Costante mantengono sempre l'ordine fisso 1,2,3 (Fossacesia ultima)
+        if (a.luna && b.luna) return a.luna - b.luna;
+        // Tra Luna Costante e altri: usa hash per evitare che siano sempre in cima
+        return hashStr(a.n + a.c) - hashStr(b.n + b.c);
+      });
       // Ordina: prima esatto match nome, poi gli altri. Le 3 Luna escono in ordine di array (Milano, Torino, Fossacesia)
       if (matches.length === 0) {
         results = `<div class="search-empty">Nessun risultato per "${escapeHTML(searchQuery)}"</div>`;
